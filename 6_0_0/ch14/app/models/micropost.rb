@@ -1,7 +1,15 @@
 class Micropost < ApplicationRecord
   belongs_to       :user
   has_one_attached :image
-  default_scope -> { order(created_at: :desc) }
+
+  default_scope do
+    if Current.blocking_ids.present?
+      query = where.not(user_id: Current.blocking_ids).order(created_at: :desc)
+    else
+      order(created_at: :desc)
+    end
+  end
+
   validates :user_id, presence: true
   validates :content, presence: true, length: { maximum: 140 }
   validates :image,   content_type: { in: %w[image/jpeg image/gif image/png],

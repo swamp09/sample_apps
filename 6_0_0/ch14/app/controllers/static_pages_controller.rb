@@ -1,4 +1,6 @@
 class StaticPagesController < ApplicationController
+  include HideBlockingUser
+
   def home
     if logged_in?
       @micropost  = current_user.microposts.build
